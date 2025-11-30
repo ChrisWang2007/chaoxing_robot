@@ -41,7 +41,7 @@ from bs4 import BeautifulSoup
 print('''
 ------欢迎使用学习通自动登录及答案查找bot------
 
-------使用时请先将 <_internal文件夹> 与 <mooc_robot.exe> 置于同一文件夹下, <mooc_exe> 为入口------
+------使用时请先将 <_internal文件夹> 与 <mooc_robot.exe> 置于同一文件夹下, <mooc_robot.exe> 为入口------
 
 ------本程序基于 <deepseekAPI>, 即使用时, 需自行获取 <deepseekAPI> 并输入------
 
@@ -52,7 +52,6 @@ print('''
 ------本程序拥有记忆功能, <作业地址> 及 <7日有效cookie> 及 <deepseekAPI> 将在首次获取后以txt形式保留于 <mooc_robot.exe所处文件夹> 下, 若需更改请自行从选单更改------
 
 ------注意: 本程序无自动输入功能, 用户在获取所有作业答案后, 需自行填选或输入文本内容------
-      
       
 ''')
 
