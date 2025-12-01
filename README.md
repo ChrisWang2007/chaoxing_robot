@@ -4,5 +4,3 @@
 使用时, 请自行打开浏览器作业页面, 并复制作业页面网址输入程序地址请求.
 
 请自行打开deepseekapi官网<获取, 并充值>私有api: https://platform.deepseek.com
-
-直接使用请pull <chaoxing_robot文件夹>
