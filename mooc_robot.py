@@ -1,4 +1,4 @@
-from selenium.webdriver.support import expected_conditions as EC
+﻿from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.service import Service as EdgeService
@@ -295,9 +295,24 @@ class FilePath:
             self.base_path = sys._MEIPASS
         except AttributeError:
             self.base_path = os.path.abspath(os.path.dirname(__file__))
-    
+
     @staticmethod
-    def resource_path(relative_path):
+    def script_dir():
+        return os.path.abspath(os.path.dirname(__file__))
+
+    @staticmethod
+    def executable_dir():
+        try:
+            return os.path.abspath(os.path.dirname(sys.executable))
+        except (AttributeError, NameError):
+            return FilePath.script_dir()
+
+    @staticmethod
+    def is_frozen():
+        return bool(getattr(sys, 'frozen', False))
+
+    @staticmethod
+    def driver_path(relative_path):
         # 优先检查用户自定义路径
         if FilePath.custom_driver_path and os.path.exists(os.path.join(FilePath.custom_driver_path, relative_path)):
             return os.path.join(FilePath.custom_driver_path, relative_path)
@@ -321,31 +336,39 @@ class FilePath:
             pass
         
         # 检查脚本目录
-        script_dir = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(script_dir, relative_path)
+        return os.path.join(FilePath.script_dir(), relative_path)
+
+    @staticmethod
+    def config_path(relative_path):
+        base_dir = FilePath.executable_dir() if FilePath.is_frozen() else FilePath.script_dir()
+        return os.path.join(base_dir, relative_path)
+
+    @staticmethod
+    def resource_path(relative_path):
+        return FilePath.driver_path(relative_path)
     
     @property
     def page_address_file(self):
         """获取作业地址文件路径"""
         from pathlib import Path
-        return Path(self.resource_path('page_address.txt'))
+        return Path(self.config_path('page_address.txt'))
     
     @property
     def page_cookie_file(self):
         """获取 Cookie 文件路径"""
         from pathlib import Path
-        return Path(self.resource_path('page_cookie.txt'))
+        return Path(self.config_path('page_cookie.txt'))
     
     @property
     def api_key_file(self):
         """获取 API 密钥文件路径"""
         from pathlib import Path
-        return Path(self.resource_path('api.txt'))
+        return Path(self.config_path('api.txt'))
 
 
 class SimpleStore:
     def __init__(self, filename, prompt_name):
-        self.path = FilePath.resource_path(filename)
+        self.path = FilePath.config_path(filename)
         self.prompt_name = prompt_name
 
     def read(self):
@@ -355,6 +378,7 @@ class SimpleStore:
             return file.read().lstrip('\ufeff').strip()
 
     def write(self, value):
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)
         with open(self.path, 'w', encoding='utf-8') as file:
             file.write(str(value).strip())
 
