@@ -54,11 +54,20 @@ pip install selenium requests beautifulsoup4 openai
 
 ## 如何使用
 
-启动：
+启动方式：
+
+源码版：
 
 ```bash
 python mooc_robot.py
 ```
+
+Release 版：
+
+- 推荐下载 `mooc_robot_portable.zip`，解压后直接运行 `mooc_robot.exe`
+- 也可以单独下载 `mooc_robot.exe`，放到一个独立目录后直接双击运行
+- 无论使用哪种 Release 方式，浏览器驱动都需要单独下载并放到 `mooc_robot.exe` 同目录
+- 裸 `exe` 首次运行后，程序会在 EXE 同目录读写 `page_address.txt`、`page_cookie.txt`、`api.txt`
 
 主菜单功能：
 
@@ -78,6 +87,19 @@ python mooc_robot.py
 6. 选择“开始作业解答”
 7. AI 返回答案后，可选择自动填写到网页
 8. 程序填写完成后不会自动提交，请手动检查后再决定是否提交
+
+## GitHub Release 使用
+
+当前 GitHub Release 默认提供两个公开资产：
+
+- `mooc_robot.exe`
+- `mooc_robot_portable.zip`
+
+说明：
+
+- `mooc_robot_portable.zip` 内包含 `mooc_robot.exe` 和 3 个空白配置文件，适合直接解压后使用
+- 单独下载 `mooc_robot.exe` 也可以直接运行，程序会在同目录创建或更新配置文件
+- 两种公开资产都不包含浏览器驱动，请根据自己的浏览器版本单独下载驱动并放到 EXE 同目录
 
 ## DeepSeek API 创建方法
 
@@ -172,6 +194,7 @@ python build.py
 - `mooc_robot.exe` 为单文件 EXE
 - 浏览器驱动外置，不打进 EXE
 - `api.txt`、`page_cookie.txt`、`page_address.txt` 外置，不打进 EXE
+- GitHub Release 可额外发布不含驱动的便携包，便于公开分发
 
 ## 注意事项
 
