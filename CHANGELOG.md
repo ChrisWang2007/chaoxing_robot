@@ -114,6 +114,9 @@
 - 浏览器驱动不打进 EXE
 - 配置文件不打进 EXE
 - EXE 运行时读写行为与 `.py` 版本保持一致
+- 裸 `EXE` 首次运行时，配置文件也会稳定写入 EXE 同目录，不再依赖文件预先存在
+- GitHub Release 发布形态补充为 `mooc_robot.exe` + `mooc_robot_portable.zip`
+- 公开便携包只包含 EXE 和空白配置文件，不包含任何驱动或真实本地配置
 
 ## 8. 公开仓库安全性优化
 
