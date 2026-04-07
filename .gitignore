@@ -1,0 +1,15 @@
+api.txt
+page_cookie.txt
+page_address.txt
+
+edgeDriver.exe
+chromeDriver.exe
+firefoxDriver.exe
+ieDriverServer.exe
+
+build/
+build_release/
+dist/
+dist_release/
+__pycache__/
+*.pyc
