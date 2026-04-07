@@ -194,7 +194,7 @@ python build.py
 - `mooc_robot.exe` 为单文件 EXE
 - 浏览器驱动外置，不打进 EXE
 - `api.txt`、`page_cookie.txt`、`page_address.txt` 外置，不打进 EXE
-- GitHub Release 可额外发布不含驱动的便携包，便于公开分发
+- GitHub Release 已额外发布不含驱动的便携包，便于公开分发
 
 ## 注意事项
 
