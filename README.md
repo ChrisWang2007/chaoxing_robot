@@ -1,42 +1,65 @@
 # 超星学习通自动作业助手
 
-一个面向超星学习通作业页的本地自动化工具，支持：
+`v3.0.2` 是当前仓库的最新发布版本。项目提供源码运行、桌面 EXE 打包，以及适合 GitHub Release 分发的便携压缩包。
 
-- 自动获取 Cookie 并登录
-- 结构化抓取作业题目
+## 项目简介
+
+这是一个面向超星学习通页面的本地自动化工具，当前版本支持：
+
+- 自动登录并获取 Cookie
+- 结构化抓取课程、章节、作业、考试等任务
 - 调用 DeepSeek API 生成答案
-- 按题号自动填写单选、多选、填空、判断、论述题
-- 自动填写后保留浏览器供人工检查，不自动提交
-- 一键打包为桌面 EXE 交付目录
+- 自动填写单选、多选、判断、填空、论述题
+- 章节测验填写完成后自动提交
+- 普通作业填写完成后保留页面供人工复核，不默认自动提交
+- 提供 GUI 工作台与 CLI 入口
+- 支持桌面交付目录和 GitHub Release 便携包
 
-## 当前版本特性
+## v3.0.2 重点改进
 
-- 题目抓取已升级为结构化提取，不再只依赖整页文本
-- 自动填写已覆盖客观题、填空题、论述题
-- AI 输出支持“结构化 JSON 答案块 + 解释说明”
-- 终端界面已做轻量卡片化整理
-- 主菜单支持手动重新检测浏览器驱动
-- 已修复论述题误报填写失败的问题
-- 已静默 Chromium 的 SSL handshake 控制台噪音日志
-- 打包流程支持外置驱动、外置配置文件
+- 修复章节测验页自动填写后未继续执行自动提交的问题
+- 新增章节测验地址识别逻辑，仅对章节测验页启用自动提交
+- 普通作业页继续保持手动提交，不改变原有安全策略
+- 兼容章节测验提交时的页内确认弹窗流程
+- GUI 与 CLI 的自动填写提示已区分“章节测验自动提交”和“普通作业人工提交”
 
 ## 运行环境
 
 - Windows
 - Python 3.10+
-- 已安装浏览器和对应 WebDriver
+- 已安装浏览器和对应版本的 WebDriver
 
-建议先安装依赖：
+建议安装依赖：
 
 ```bash
-pip install selenium requests beautifulsoup4 openai
+pip install selenium requests beautifulsoup4 openai customtkinter darkdetect pyinstaller
 ```
 
-## 目录说明
+## 入口说明
 
-运行主程序时，程序目录下建议保留以下文件：
+GUI 入口：
+
+```bash
+python mooc_robot_gui.py
+```
+
+CLI 入口：
+
+```bash
+python mooc_robot.py
+```
+
+说明：
+
+- `mooc_robot_gui.py` 是当前推荐入口，也是 EXE 打包入口
+- `mooc_robot.py` 保留命令行模式，适合直接调试或排查
+
+## 本地运行所需文件
+
+程序目录建议保留以下文件：
 
 - `mooc_robot.py`
+- `mooc_robot_gui.py`
 - `page_address.txt`
 - `page_cookie.txt`
 - `api.txt`
@@ -45,139 +68,50 @@ pip install selenium requests beautifulsoup4 openai
 - `firefoxDriver.exe`
 - `ieDriverServer.exe`
 
-说明：
+其中：
 
-- `page_address.txt`：保存作业页面地址
-- `page_cookie.txt`：保存 Cookie
-- `api.txt`：保存 DeepSeek API Key
-- 4 个驱动文件按需放同目录即可，程序会自动检测
+- `page_address.txt` 保存作业或课程页面地址
+- `page_cookie.txt` 保存登录 Cookie
+- `api.txt` 保存 DeepSeek API Key
+- 浏览器驱动按需放到程序同目录，程序会自动检测可用状态
 
-## 如何使用
+## 推荐使用流程
 
-启动方式：
+1. 准备可用的浏览器驱动并放到程序目录
+2. 启动 `python mooc_robot_gui.py`
+3. 在 GUI 中填写或载入地址、Cookie、API Key
+4. 先执行登录 / Cookie 获取，再载入课程、章节或作业
+5. 生成答案后选择自动填写
+6. 普通作业请人工复核后再提交；章节测验会在填写完成后自动提交
 
-源码版：
+## 章节任务说明
 
-```bash
-python mooc_robot.py
-```
+`v3.0.2` 起，章节自动化中的章节测验页与普通作业页共享同一套题目提取与自动填写能力，但提交策略不同：
 
-Release 版：
+- 兼容章节页专用题干布局
+- 兼容章节页专用选项列表结构
+- 支持章节测验中的填空题、判断题、多选题、单选题
+- 论述题仍沿用普通作业页相同的文本题填写逻辑
+- 章节测验：填写完成后自动提交
+- 普通作业：填写完成后保留页面，等待人工检查与提交
 
-- 推荐下载 `mooc_robot_portable.zip`，解压后直接运行 `mooc_robot.exe`
-- 也可以单独下载 `mooc_robot.exe`，放到一个独立目录后直接双击运行
-- 无论使用哪种 Release 方式，浏览器驱动都需要单独下载并放到 `mooc_robot.exe` 同目录
-- 裸 `exe` 首次运行后，程序会在 EXE 同目录读写 `page_address.txt`、`page_cookie.txt`、`api.txt`
+## GitHub Release 资产
 
-主菜单功能：
-
-1. 自动获取 Cookie 并登录
-2. 开始作业解答
-3. 修改配置（地址 / Cookie / API）
-4. 重新检测浏览器驱动
-0. 退出程序
-
-推荐使用流程：
-
-1. 准备一个可用的浏览器驱动，放到程序同目录
-2. 运行 `python mooc_robot.py`
-3. 先使用“自动获取 Cookie 并登录”，把 Cookie 保存到本地
-4. 在 `page_address.txt` 中填入作业页面地址
-5. 在 `api.txt` 中填入 DeepSeek API Key
-6. 选择“开始作业解答”
-7. AI 返回答案后，可选择自动填写到网页
-8. 程序填写完成后不会自动提交，请手动检查后再决定是否提交
-
-## GitHub Release 使用
-
-当前 GitHub Release 默认提供两个公开资产：
+当前发布默认提供以下资产：
 
 - `mooc_robot.exe`
 - `mooc_robot_portable.zip`
 
 说明：
 
-- `mooc_robot_portable.zip` 内包含 `mooc_robot.exe` 和 3 个空白配置文件，适合直接解压后使用
-- 单独下载 `mooc_robot.exe` 也可以直接运行，程序会在同目录创建或更新配置文件
-- 两种公开资产都不包含浏览器驱动，请根据自己的浏览器版本单独下载驱动并放到 EXE 同目录
+- `mooc_robot.exe` 为单文件 GUI 程序
+- `mooc_robot_portable.zip` 内包含 `mooc_robot.exe` 和 3 个空白配置文件
+- Release 资产不包含任何浏览器驱动
+- Release 资产不包含真实本地配置或 Cookie
 
-## DeepSeek API 创建方法
+## 打包方式
 
-当前程序通过 OpenAI SDK 兼容方式调用 DeepSeek：
-
-- `base_url`: `https://api.deepseek.com`
-- 模型：
-  - `deepseek-chat`
-  - `deepseek-reasoner`
-
-官方入口：
-
-- DeepSeek 开放平台：<https://platform.deepseek.com/>
-- DeepSeek API 文档：<https://api-docs.deepseek.com/>
-
-创建 API Key 的基本步骤：
-
-1. 打开 DeepSeek 开放平台并登录账号
-2. 完成平台要求的账号设置
-3. 进入 API Key 管理页面
-4. 创建新的 API Key
-5. 复制生成的 Key
-6. 将 Key 写入程序目录下的 `api.txt`
-
-程序中的实际调用方式与官方文档一致，当前代码使用：
-
-```python
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=api_key,
-    base_url="https://api.deepseek.com",
-)
-```
-
-## 浏览器驱动说明
-
-本仓库不再直接提供浏览器驱动，请自行下载并放在程序目录。
-
-常见驱动下载入口：
-
-- Edge WebDriver  
-  <https://developer.microsoft.com/microsoft-edge/tools/webdriver/>
-- ChromeDriver  
-  <https://chromedriver.chromium.org/downloads>
-- GeckoDriver / Firefox  
-  <https://github.com/mozilla/geckodriver/releases>
-- IE Driver Server  
-  <https://www.selenium.dev/downloads/>
-
-文件名需与程序默认识别一致：
-
-- `edgeDriver.exe`
-- `chromeDriver.exe`
-- `firefoxDriver.exe`
-- `ieDriverServer.exe`
-
-## 自动填写说明
-
-当前自动填写逻辑支持：
-
-- 单选题
-- 多选题
-- 填空题
-- 判断题
-- 论述题 / 文本题
-
-自动填写的关键行为：
-
-- 通过 `qid` 定位题目
-- 客观题使用页面原生点击逻辑触发答案更新
-- 文本题和填空题通过 UEditor / textarea 写入
-- 填写完成后输出成功 / 失败 / 跳过统计
-- 默认不自动提交
-
-## 打包 EXE
-
-当前项目支持把程序打包为桌面交付目录：
+执行：
 
 ```bash
 python package_exe.py
@@ -189,22 +123,64 @@ python package_exe.py
 python build.py
 ```
 
-打包结果会生成到桌面 `mooc_robot_release`，并遵循以下规则：
+打包完成后会在桌面生成两个产物：
 
-- `mooc_robot.exe` 为单文件 EXE
-- 浏览器驱动外置，不打进 EXE
-- `api.txt`、`page_cookie.txt`、`page_address.txt` 外置，不打进 EXE
-- GitHub Release 已额外发布不含驱动的便携包，便于公开分发
+- `~/Desktop/mooc_robot_release`
+- `~/Desktop/mooc_robot_portable.zip`
+
+其中：
+
+- `mooc_robot_release` 为本地交付目录，包含 `mooc_robot.exe`、当前本地配置文件、当前本地驱动文件
+- `mooc_robot_portable.zip` 为公开发布便携包，仅包含 `mooc_robot.exe` 和 3 个空白配置文件
+
+## DeepSeek API 配置
+
+当前程序通过 OpenAI SDK 兼容方式调用 DeepSeek：
+
+- `base_url`: `https://api.deepseek.com`
+- 模型：
+  - `deepseek-chat`
+  - `deepseek-reasoner`
+
+示例：
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://api.deepseek.com",
+)
+```
+
+## 浏览器驱动下载
+
+仓库不再直接提交浏览器驱动，请根据本机浏览器版本自行下载：
+
+- Edge WebDriver  
+  <https://developer.microsoft.com/microsoft-edge/tools/webdriver/>
+- ChromeDriver  
+  <https://chromedriver.chromium.org/downloads>
+- GeckoDriver / Firefox  
+  <https://github.com/mozilla/geckodriver/releases>
+- IE Driver Server  
+  <https://www.selenium.dev/downloads/>
+
+驱动文件名需与程序默认识别名称保持一致：
+
+- `edgeDriver.exe`
+- `chromeDriver.exe`
+- `firefoxDriver.exe`
+- `ieDriverServer.exe`
 
 ## 注意事项
 
-- 不要把自己的 `api.txt`、`page_cookie.txt`、`page_address.txt` 上传到公开仓库
-- 自动填写只是辅助工具，提交前请务必人工复核
-- 浏览器驱动版本应与本机浏览器版本匹配
-- 若 Cookie 失效，需要重新登录获取
+- 不要把真实 `api.txt`、`page_cookie.txt`、`page_address.txt` 上传到公开仓库
+- 普通作业自动填写后不会自动提交，请务必人工复核
+- 章节测验会在填写完成后自动提交，使用前请确认这是你期望的行为
+- 浏览器驱动版本必须与浏览器版本匹配
+- Cookie 失效后需要重新登录获取
 
 ## 更新记录
 
-详细更新说明见：
-
-- `CHANGELOG.md`
+详细版本说明见 `CHANGELOG.md`。
